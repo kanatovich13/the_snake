@@ -29,19 +29,19 @@ clock = pygame.time.Clock()
 
 
 class GameObject:
-    """Базовый класс для игровых объектов."""
+    """Родитель классов Snake и Apple, содержит общие атрибуты и методы."""
 
     def __init__(self, position=(0, 0), body_color=None):
         self.position = position
         self.body_color = body_color
 
     def draw(self):
-        """Заготовка метода отрисовки."""
+        """Надо переопределить в наследниках."""
         pass
 
 
 class Apple(GameObject):
-    """Класс, описывающий яблоко."""
+    """Класс для яблока"""
 
     def __init__(self):
         # Генерируем случайную позицию, выровненную по сетке
@@ -57,7 +57,7 @@ class Apple(GameObject):
 
 
 class Snake(GameObject):
-    """Класс, описывающий змейку и её поведение."""
+    """Класс для змеи."""
 
     def __init__(self):
         center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
@@ -65,7 +65,7 @@ class Snake(GameObject):
         self.reset()
 
     def reset(self):
-        """Сброс змейки в начальное состояние."""
+        """Начальная позиция."""
         self.length = 1
         self.positions = [self.position]
         self.direction = choice([UP, DOWN, LEFT, RIGHT])
@@ -79,7 +79,7 @@ class Snake(GameObject):
             self.next_direction = None
 
     def move(self):
-        """Логика перемещения змейки по полю."""
+        """Логика перемещения."""
         head_x, head_y = self.positions[0]
         dx, dy = self.direction
 
@@ -101,7 +101,7 @@ class Snake(GameObject):
                 self.last = None
 
     def draw(self):
-        """Отрисовка змейки (всех её сегментов)."""
+        """Отрисовка змейки на экране."""
         for position in self.positions:
             rect = pygame.Rect(position, (GRID_SIZE, GRID_SIZE))
             pygame.draw.rect(screen, self.body_color, rect)
@@ -126,7 +126,7 @@ def handle_keys(game_object):
 
 
 def main():
-    """Основной игровой цикл."""
+    """Основной цикл."""
     pygame.init()
     snake = Snake()
     apple = Apple()
