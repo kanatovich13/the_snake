@@ -31,7 +31,7 @@ clock = pygame.time.Clock()
 
 
 class GameObject:
-    """Родитель классов Snake и Apple, содержит общие атрибуты и методы."""
+    """Родитель классов Snake и Apple."""
 
     def __init__(self, position=(0, 0), body_color=None):
         self.position = position
@@ -46,7 +46,7 @@ class Apple(GameObject):
     """Класс для яблока"""
 
     def __init__(self):
-        # Генерируем случайную позицию, выровненную по сетке
+        # Генерируем случайную позицию
         pos = (randint(0, GRID_WIDTH - 1) * GRID_SIZE,
                randint(0, GRID_HEIGHT - 1) * GRID_SIZE)
         super().__init__(pos, APPLE_COLOR)
