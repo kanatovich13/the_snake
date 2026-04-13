@@ -46,10 +46,15 @@ class Apple(GameObject):
     """Класс для яблока."""
 
     def __init__(self):
-        # Генерируем случайную позицию
-        pos = (randint(0, GRID_WIDTH - 1) * GRID_SIZE,
-               randint(0, GRID_HEIGHT - 1) * GRID_SIZE)
-        super().__init__(pos, APPLE_COLOR)
+        super().__init__(body_color=APPLE_COLOR)
+        self.randomize_position()
+
+    def randomize_position(self):
+        """Устанавливает случайное положение яблока."""
+        self.position = (
+            randint(0, GRID_WIDTH - 1) * GRID_SIZE,
+            randint(0, GRID_HEIGHT - 1) * GRID_SIZE
+        )
 
     def draw(self):
         """Отрисовка яблока на экране."""
@@ -65,6 +70,10 @@ class Snake(GameObject):
         center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
         super().__init__(center, SNAKE_COLOR)
         self.reset()
+
+    def get_head_position(self):
+        """Возвращает позицию головы змеи."""
+        return self.positions[0]
 
     def reset(self):
         """Начальная позиция."""
@@ -82,16 +91,14 @@ class Snake(GameObject):
 
     def move(self):
         """Логика перемещения."""
-        head_x, head_y = self.positions[0]
+        head_x, head_y = self.get_head_position()
         dx, dy = self.direction
 
-        # Вычисляем новую голову с учетом "сквозного" прохода через границы
         new_head = (
             (head_x + dx * GRID_SIZE) % SCREEN_WIDTH,
             (head_y + dy * GRID_SIZE) % SCREEN_HEIGHT
         )
 
-        # Проверка на столкновение с собой
         if new_head in self.positions[2:]:
             self.reset()
             screen.fill(BOARD_BACKGROUND_COLOR)
@@ -139,12 +146,10 @@ def main():
         snake.update_direction()
         snake.move()
 
-        # Проверка: съела ли змейка яблоко
-        if snake.positions[0] == apple.position:
+        if snake.get_head_position() == apple.position:
             snake.length += 1
-            apple = Apple()  # Создаем новое яблоко
+            apple.randomize_position()
 
-        # Отрисовка
         screen.fill(BOARD_BACKGROUND_COLOR)
         apple.draw()
         snake.draw()
