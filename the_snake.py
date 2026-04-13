@@ -1,9 +1,9 @@
-import pygame
-
+import sys
 from random import choice, randint
 
-# Константы для размеров поля и сетки:
+import pygame
 
+# Константы для размеров поля и сетки:
 SCREEN_WIDTH, SCREEN_HEIGHT = 640, 480
 GRID_SIZE = 20
 GRID_WIDTH = SCREEN_WIDTH // GRID_SIZE
@@ -43,7 +43,7 @@ class GameObject:
 
 
 class Apple(GameObject):
-    """Класс для яблока"""
+    """Класс для яблока."""
 
     def __init__(self):
         # Генерируем случайную позицию
@@ -115,7 +115,7 @@ def handle_keys(game_object):
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
-            raise SystemExit
+            sys.exit()
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP and game_object.direction != DOWN:
                 game_object.next_direction = UP
