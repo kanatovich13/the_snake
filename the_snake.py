@@ -43,12 +43,12 @@ class GameObject:
         self.position = position
         self.body_color = body_color
 
-    def draw_cell(self, position, color=None):
+    def draw_cell(self, position, color=None, border_color=BORDER_COLOR):
         """Отрисовка одной ячейки."""
         color = color or self.body_color
         rect = pg.Rect(position, (GRID_SIZE, GRID_SIZE))
         pg.draw.rect(screen, color, rect)
-        pg.draw.rect(screen, BORDER_COLOR, rect, 1)
+        pg.draw.rect(screen, border_color, rect, 1)
 
     def draw(self):
         """Метод отрисовки (переопределяется)."""
@@ -83,9 +83,9 @@ class Apple(GameObject):
 class Snake(GameObject):
     """Класс змейки."""
 
-    def __init__(self):
+    def __init__(self, body_color=SNAKE_COLOR):
         """Инициализация змейки."""
-        super().__init__(body_color=SNAKE_COLOR)
+        super().__init__(body_color=body_color)
         self.reset()
 
     def get_head_position(self):
@@ -124,7 +124,11 @@ class Snake(GameObject):
         self.draw_cell(self.get_head_position())
 
         if self.last:
-            self.draw_cell(self.last, BOARD_BACKGROUND_COLOR)
+            self.draw_cell(
+                self.last,
+                BOARD_BACKGROUND_COLOR,
+                BOARD_BACKGROUND_COLOR
+            )
 
 
 def handle_keys(snake):
@@ -158,6 +162,10 @@ def main():
 
     high_score = 0
 
+    pg.display.set_caption(
+        f'Змейка | Рекорд: {high_score} | Длина: 1 | ESC - выход'
+    )
+
     while True:
         clock.tick(SPEED)
         handle_keys(snake)
@@ -168,20 +176,22 @@ def main():
             apple.randomize_position(snake.positions)
             apple.draw()
 
-        score = snake.length - 1
-        if score > high_score:
-            high_score = score
+            score = snake.length - 1
+            if score > high_score:
+                high_score = score
 
-        caption = (
-            f'Змейка | Рекорд: {high_score} | '
-            f'Длина: {snake.length} | ESC - выход'
-        )
-        pg.display.set_caption(caption)
+            pg.display.set_caption(
+                f'Змейка | Рекорд: {high_score} | '
+                f'Длина: {snake.length} | ESC - выход'
+            )
 
-        if snake.get_head_position() in snake.positions[4:]:
+        elif snake.get_head_position() in snake.positions[4:]:
             snake.reset()
             screen.fill(BOARD_BACKGROUND_COLOR)
             apple.randomize_position(snake.positions)
+            pg.display.set_caption(
+                f'Змейка | Рекорд: {high_score} | Длина: 1 | ESC - выход'
+            )
 
         apple.draw()
         snake.draw()
