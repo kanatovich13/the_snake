@@ -36,28 +36,37 @@ clock = pg.time.Clock()
 
 
 class GameObject:
+    """Базовый класс для игровых объектов."""
+
     def __init__(self, position=DEFAULT_POSITION, body_color=None):
+        """Инициализация объекта."""
         self.position = position
         self.body_color = body_color
 
     def draw_cell(self, position, color=None):
+        """Отрисовка одной ячейки."""
         color = color or self.body_color
         rect = pg.Rect(position, (GRID_SIZE, GRID_SIZE))
         pg.draw.rect(screen, color, rect)
         pg.draw.rect(screen, BORDER_COLOR, rect, 1)
 
     def draw(self):
+        """Метод отрисовки (переопределяется)."""
         raise NotImplementedError(
             f'Метод draw не определен в классе {self.__class__.__name__}'
         )
 
 
 class Apple(GameObject):
+    """Класс яблока."""
+
     def __init__(self, occupied_positions=None, body_color=APPLE_COLOR):
+        """Инициализация яблока."""
         super().__init__(body_color=body_color)
         self.randomize_position(occupied_positions or [])
 
     def randomize_position(self, occupied_positions):
+        """Выбор случайной позиции."""
         while True:
             self.position = (
                 randint(0, GRID_WIDTH - 1) * GRID_SIZE,
@@ -67,28 +76,36 @@ class Apple(GameObject):
                 break
 
     def draw(self):
+        """Отрисовка яблока."""
         self.draw_cell(self.position)
 
 
 class Snake(GameObject):
+    """Класс змейки."""
+
     def __init__(self):
+        """Инициализация змейки."""
         super().__init__(body_color=SNAKE_COLOR)
         self.reset()
 
     def get_head_position(self):
-        return self.positions[0]
+        """Получение позиции головы."""
+        return self.positions
 
     def reset(self):
+        """Сброс состояния змейки."""
         self.length = 1
         self.positions = [CENTER]
         self.direction = choice([UP, DOWN, LEFT, RIGHT])
         self.last = None
 
     def update_direction(self, next_direction):
+        """Обновление направления движения."""
         if next_direction != OPPOSITE_DIRECTIONS.get(self.direction):
             self.direction = next_direction
 
     def move(self):
+        """Перемещение змейки."""
         head_x, head_y = self.get_head_position()
         dx, dy = self.direction
 
@@ -103,6 +120,7 @@ class Snake(GameObject):
             self.last = None
 
     def draw(self):
+        """Отрисовка змейки."""
         self.draw_cell(self.get_head_position())
 
         if self.last:
@@ -110,6 +128,7 @@ class Snake(GameObject):
 
 
 def handle_keys(snake):
+    """Обработка нажатий клавиш."""
     for event in pg.event.get():
         if event.type == pg.QUIT:
             pg.quit()
@@ -130,6 +149,7 @@ def handle_keys(snake):
 
 
 def main():
+    """Основная функция игры."""
     pg.init()
     snake = Snake()
     apple = Apple(snake.positions)
