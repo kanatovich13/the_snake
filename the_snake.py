@@ -31,6 +31,9 @@ DEFAULT_POSITION = (0, 0)
 
 SPEED = 10
 
+# Константа для заголовка
+CAPTION_TEXT = 'Змейка | Рекорд: {high_score} | Длина: {length} | ESC - выход'
+
 screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32)
 clock = pg.time.Clock()
 
@@ -121,7 +124,8 @@ class Snake(GameObject):
 
     def draw(self):
         """Отрисовка змейки."""
-        self.draw_cell(self.get_head_position())
+        for position in self.positions:
+            self.draw_cell(position)
 
         if self.last:
             self.draw_cell(
@@ -162,10 +166,6 @@ def main():
 
     high_score = 0
 
-    pg.display.set_caption(
-        f'Змейка | Рекорд: {high_score} | Длина: 1 | ESC - выход'
-    )
-
     while True:
         clock.tick(SPEED)
         handle_keys(snake)
@@ -174,24 +174,20 @@ def main():
         if snake.get_head_position() == apple.position:
             snake.length += 1
             apple.randomize_position(snake.positions)
-            apple.draw()
 
             score = snake.length - 1
             if score > high_score:
                 high_score = score
 
-            pg.display.set_caption(
-                f'Змейка | Рекорд: {high_score} | '
-                f'Длина: {snake.length} | ESC - выход'
-            )
-
-        elif snake.get_head_position() in snake.positions[4:]:
+        elif snake.get_head_position() in snake.positions[1:]:
             snake.reset()
             screen.fill(BOARD_BACKGROUND_COLOR)
             apple.randomize_position(snake.positions)
-            pg.display.set_caption(
-                f'Змейка | Рекорд: {high_score} | Длина: 1 | ESC - выход'
-            )
+
+        # Применение format для заголовка
+        pg.display.set_caption(
+            CAPTION_TEXT.format(high_score=high_score, length=snake.length)
+        )
 
         apple.draw()
         snake.draw()
